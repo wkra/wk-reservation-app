@@ -4,7 +4,13 @@ import DeskCreateForm from './desk-create-form';
 
 describe('DeskCreateForm', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<DeskCreateForm />);
+    const { baseElement } = render(
+      <DeskCreateForm
+        onClose={() => {
+          return;
+        }}
+      />
+    );
     expect(baseElement).toBeTruthy();
   });
 });
