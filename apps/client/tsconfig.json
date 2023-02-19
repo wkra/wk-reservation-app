@@ -8,6 +8,7 @@
   },
   "files": [],
   "include": [],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"

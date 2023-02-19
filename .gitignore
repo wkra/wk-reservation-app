@@ -43,3 +43,6 @@ Thumbs.db
 
 #env
 .env.local
+
+#schema
+schema.gql

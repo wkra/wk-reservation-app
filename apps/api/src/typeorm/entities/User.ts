@@ -1,5 +1,6 @@
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 import {Reservation} from './Reservation';
+import {UserType} from './UserType';
 
 @Entity({name: 'users'})
 export class User {
@@ -10,8 +11,11 @@ export class User {
   username: string
 
   @Column()
-  createdAt: string
+  createdAt: Date
 
   @OneToMany(() => Reservation, (reservation) => reservation.desk)
   reservations: Reservation[]
+
+  @ManyToOne(() => UserType, (userType) => userType.users)
+  userType: UserType
 }

@@ -13,10 +13,17 @@ export class UserResolver {
   ) {}
 
 
-  @Mutation(()=> String)
+  @Mutation(()=> Boolean)
   async createUser(
     @Args('username') username: string,
-  ): Promise<User> {
-    return await this.userService.createUser(username);
+  ): Promise<boolean> {
+    try {
+      await this.userService.createUser(username);
+      return true
+    } 
+    catch {
+      return false
+    }
+
   }
 }
