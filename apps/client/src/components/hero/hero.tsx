@@ -1,7 +1,6 @@
 import Datepicker from "../datepicker/datepicker";
 
 export default function Hero() {
-  console.log(process.env.PUBLIC_URL, '****')
 
   return (
     <div className="relative bg-gray-50">
