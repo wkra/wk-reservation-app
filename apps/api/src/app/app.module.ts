@@ -38,7 +38,7 @@ import { ReservationModule } from '../reservation/reservation.module';
       port: parseFloat(process.env.NX_API_PORT),
       username: process.env.NX_API_USERNAME,
       password: process.env.NX_API_PASSWORD,
-      database: 'wk-reservation',
+      database: process.env.NX_API_DATABASE,
       entities: [User, Desk, Reservation],
       synchronize: true,
     }),
