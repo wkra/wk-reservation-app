@@ -1,21 +1,27 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "allowJs": false,
-    "esModuleInterop": false,
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": false, // origin true 
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
-  "files": [],
-  "include": [],
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+  "include": [
+    "src"
   ],
-  "extends": "../../tsconfig.base.json"
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
 }

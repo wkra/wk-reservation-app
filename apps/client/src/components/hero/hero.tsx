@@ -1,5 +1,4 @@
 import Datepicker from "../datepicker/datepicker";
-
 export default function Hero() {
 
   return (
@@ -23,7 +22,7 @@ export default function Hero() {
         <div className="relative h-64 w-full sm:h-72 md:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-full lg:w-1/2">
           <img
             className="absolute inset-0 h-full w-full object-cover"
-            src={'assets/desk.jpeg'} alt="Desk"
+            src={'images/desk.jpeg'} alt="Desk"
           />
         </div>
       </main>

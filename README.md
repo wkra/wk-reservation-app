@@ -4,11 +4,11 @@
 
 ## Config
 
-Copy `.env` to `.env.local` and enter correct data.
+Change `.env` database data.
 
 ## Development
 
-Run `npm start` to run.
+Run `npm run dev` to run develop.
 
 ## Build
 
@@ -16,4 +16,4 @@ Run `npm run build` to run.
 
 ## Technology stack
 
-Nx monorepo, React, Redux, Tailwind, NestJs, typeorm, MySql.
+Turborepo, Typescript, React, Redux, Tailwind, NestJs, typeorm, MySql.
