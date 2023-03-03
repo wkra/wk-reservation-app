@@ -11,3 +11,6 @@
 
 # schema
 schema.gql
+
+# db
+*.db

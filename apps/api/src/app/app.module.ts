@@ -34,17 +34,25 @@ import { createUserTypes1676838977931 } from '../migrations/1676838977931-create
       },
     }),
 
+    // TypeOrmModule.forRoot({
+    //   type: 'mysql',
+    //   host: process.env.API_DB_HOST,
+    //   port: parseFloat(process.env.API_DB_PORT),
+    //   username: process.env.API_DB_USERNAME,
+    //   password: process.env.API_DB_PASSWORD,
+    //   database: process.env.API_DB_NAME,
+    //   entities: [User, UserType, Desk, Reservation],
+    //   synchronize: true,
+    //   migrations: [createUserTypes1676838977931],
+    //   migrationsRun: true
+    // }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.API_DB_HOST,
-      port: parseFloat(process.env.API_DB_PORT),
-      username: process.env.API_DB_USERNAME,
-      password: process.env.API_DB_PASSWORD,
-      database: process.env.API_DB_NAME,
-      entities: [User, UserType, Desk, Reservation],
+      type: 'sqlite',
+      database: 'reservationDB.db',
       synchronize: true,
+      entities: [User, UserType, Desk, Reservation],
       migrations: [createUserTypes1676838977931],
-      migrationsRun: true
+      migrationsRun: true,
     }),
   ],
 })
