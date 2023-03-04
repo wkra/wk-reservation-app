@@ -1,21 +1,30 @@
-import {Column, Entity, OneToMany, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {Reservation} from './Reservation';
-import {UserType} from './UserType';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Reservation } from './Reservation';
+import { UserType } from './UserType';
 
-@Entity({name: 'users'})
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column()
-  username: string
+  username: string;
 
   @Column()
-  createdAt: Date
+  password: string;
+
+  @Column()
+  createdAt: Date;
 
   @OneToMany(() => Reservation, (reservation) => reservation.desk)
-  reservations: Reservation[]
+  reservations: Reservation[];
 
   @ManyToOne(() => UserType, (userType) => userType.users)
-  userType: UserType
+  userType: UserType;
 }

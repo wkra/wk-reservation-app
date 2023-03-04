@@ -1,4 +1,4 @@
-import { Float, Query, Resolver } from "@nestjs/graphql";
+import { Float, Query, Resolver } from '@nestjs/graphql';
 
 @Resolver()
 export class AppResolver {

@@ -1,35 +1,38 @@
-import {Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Desk} from '../typeorm/entities/Desk'
-import {DeleteResult, Repository} from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Desk } from '../typeorm/entities/Desk';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class DeskService {
   constructor(
-    @InjectRepository(Desk) private deskRepository: Repository<Desk>
-  ) {
-  }
+    @InjectRepository(Desk) private deskRepository: Repository<Desk>,
+  ) {}
 
-  async createDesk(name: string, description: string, order: number): Promise<Desk> {
+  async createDesk(
+    name: string,
+    description: string,
+    order: number,
+  ): Promise<Desk> {
     const newDesk = await this.deskRepository.create({
       name,
       description,
       order,
-      createdAt: new Date()
-    })
-    return this.deskRepository.save(newDesk)
+      createdAt: new Date(),
+    });
+    return this.deskRepository.save(newDesk);
   }
 
   async removeDesk(id: number): Promise<boolean> {
     const result: DeleteResult = await this.deskRepository.delete(id);
-    return result.affected > 0
+    return result.affected > 0;
   }
 
   async getDesks(): Promise<Desk[]> {
     return await this.deskRepository.find({
       order: {
-        order: 'ASC'
-      }
+        order: 'ASC',
+      },
     });
   }
 }

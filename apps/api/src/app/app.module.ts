@@ -11,6 +11,8 @@ import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { UserModule } from '../user/user.module';
 import { DeskModule } from '../desk/desk.module';
 import { ReservationModule } from '../reservation/reservation.module';
+import { AuthModule } from '../auth/auth.module';
+
 import { createUserTypes1676838977931 } from '../migrations/1676838977931-create-user-types';
 
 @Module({
