@@ -1,11 +1,14 @@
+import { AuthGuard } from '@nestjs/passport';
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class JwtAdminGuard extends AuthGuard('jwtAdmin') {
+export class LocalAuthGuard extends AuthGuard('local') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+    const req = ctx.getContext().req;
+    req.body = ctx.getArgs();
+
+    return req;
   }
 }

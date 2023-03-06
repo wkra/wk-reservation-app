@@ -1,3 +1,4 @@
+import { AbilityModule } from 'src/ability/ability.module';
 import { Module } from '@nestjs/common';
 import { DeskService } from './desk.service';
 import { DeskResolver } from './desk.resolver';
@@ -5,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Desk } from '../typeorm/entities/Desk';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Desk])],
+  imports: [TypeOrmModule.forFeature([Desk]), AbilityModule],
   providers: [DeskService, DeskResolver],
 })
 export class DeskModule {}

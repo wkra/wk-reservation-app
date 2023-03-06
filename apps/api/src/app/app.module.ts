@@ -17,6 +17,7 @@ import { createUserTypes1676838977931 } from '../migrations/1676838977931-create
 
 @Module({
   imports: [
+    AuthModule,
     UserModule,
     DeskModule,
     ReservationModule,

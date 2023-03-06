@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../typeorm/entities/User';
 import { UserType } from '../typeorm/entities/UserType';
@@ -13,31 +13,32 @@ export class UserService {
     private userTypeRepository: Repository<UserType>, // private jwt: JwtService,
   ) {}
 
-  async createUser(username: string, password: string) {
-    const regularUserType = await this.userTypeRepository.findOneBy({ id: 2 });
-    const salt = await bcrypt.genSalt();
+  async create(username: string, password: string): Promise<any> {
+    const usernameExist = await this.findOne(username);
 
+    if (usernameExist) {
+      throw new BadRequestException('User with this username exist.');
+    }
+
+    const regularUserType = await this.userTypeRepository.findOneBy({
+      isDefaulUserType: true,
+    });
+    const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
-
     const newUser = await this.userRepository.create({
       username,
       password: hash,
       createdAt: new Date(),
       userType: regularUserType,
     });
-    return this.userRepository.save(newUser);
+    const result = await this.userRepository.save(newUser);
+    return result;
   }
 
-  // TODO move to auth module
-  async validateUser(
-    username: string,
-    password: string,
-  ): Promise<Omit<User, 'password'>> {
-    const foundUser = await this.userRepository.findOneBy({ username });
-    if (foundUser && (await bcrypt.compare(password, foundUser.password))) {
-      const { password, ...result } = foundUser;
-      return result;
-    }
-    throw new UnauthorizedException();
+  async findOne(username: string): Promise<User | undefined> {
+    return await this.userRepository.findOne({
+      where: { username },
+      relations: { userType: true },
+    });
   }
 }

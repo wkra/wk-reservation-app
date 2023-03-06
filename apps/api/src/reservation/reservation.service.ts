@@ -62,4 +62,11 @@ export class ReservationService {
     );
     return reservation.affected > 0;
   }
+
+  async findOne(id: number): Promise<Reservation | undefined> {
+    return await this.reservationRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
+  }
 }

@@ -17,7 +17,4 @@ export class ReservationModel {
 
   @Field(() => UserModel )
   user: UserModel;
-
-
-
 }

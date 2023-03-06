@@ -1,21 +1,21 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {Desk} from './Desk';
-import {User} from './User';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Desk } from './Desk';
+import { User } from './User';
 
-@Entity({name: 'reservations'})
+@Entity({ name: 'reservations' })
 export class Reservation {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column()
-  createdAt: Date
+  createdAt: Date;
 
   @Column()
-  date: Date
+  date: Date;
 
   @ManyToOne(() => Desk, (desk) => desk.reservations)
-  desk: Desk
+  desk: Desk;
 
   @ManyToOne(() => User, (user) => user.reservations)
-  user: User
+  user: User;
 }

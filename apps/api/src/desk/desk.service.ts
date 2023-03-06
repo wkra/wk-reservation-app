@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Desk } from '../typeorm/entities/Desk';
 import { DeleteResult, Repository } from 'typeorm';
@@ -14,6 +14,12 @@ export class DeskService {
     description: string,
     order: number,
   ): Promise<Desk> {
+    const deskExist = await this.deskRepository.findOneBy({ name });
+
+    if (deskExist) {
+      throw new BadRequestException('Desk with same name exist.');
+    }
+
     const newDesk = await this.deskRepository.create({
       name,
       description,
