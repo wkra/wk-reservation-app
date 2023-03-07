@@ -1,9 +1,21 @@
-import { AuthService } from './../auth/auth.service';
+import { UseGuards } from '@nestjs/common';
 import { Args, Resolver, Mutation } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { User } from '../typeorm/entities/User';
+import { CheckAbilities } from './../ability/abilities.decorator';
+import { Action } from './../ability/ability.factory';
+import { AbilitiesGuard } from './../ability/abilities.guard';
+import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
+import { User } from './../typeorm/entities/User';
 
 @Resolver()
 export class UserResolver {
-  constructor() {}
+  constructor(private userService: UserService) {}
+
+  @CheckAbilities({ action: Action.Remove, subject: User })
+  @UseGuards(AbilitiesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Boolean)
+  async removeUser(@Args('username') id: number): Promise<boolean> {
+    return this.userService.remove(id);
+  }
 }

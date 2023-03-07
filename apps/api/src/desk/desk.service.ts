@@ -1,7 +1,7 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Desk } from '../typeorm/entities/Desk';
 import { DeleteResult, Repository } from 'typeorm';
+import { Desk } from '../typeorm/entities/Desk';
 
 @Injectable()
 export class DeskService {
@@ -9,18 +9,12 @@ export class DeskService {
     @InjectRepository(Desk) private deskRepository: Repository<Desk>,
   ) {}
 
-  async createDesk(
+  async create(
     name: string,
     description: string,
     order: number,
   ): Promise<Desk> {
-    const deskExist = await this.deskRepository.findOneBy({ name });
-
-    if (deskExist) {
-      throw new BadRequestException('Desk with same name exist.');
-    }
-
-    const newDesk = await this.deskRepository.create({
+    const newDesk = this.deskRepository.create({
       name,
       description,
       order,
@@ -29,16 +23,28 @@ export class DeskService {
     return this.deskRepository.save(newDesk);
   }
 
-  async removeDesk(id: number): Promise<boolean> {
+  async remove(id: number): Promise<boolean> {
     const result: DeleteResult = await this.deskRepository.delete(id);
     return result.affected > 0;
   }
 
-  async getDesks(): Promise<Desk[]> {
+  async findAll(): Promise<Desk[]> {
     return await this.deskRepository.find({
       order: {
         order: 'ASC',
       },
+    });
+  }
+
+  async findOne(id: number): Promise<Desk> {
+    return await this.deskRepository.findOne({
+      where: { id },
+    });
+  }
+
+  async findOneByName(name: string): Promise<Desk> {
+    return await this.deskRepository.findOne({
+      where: { name },
     });
   }
 }

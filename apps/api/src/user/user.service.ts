@@ -1,38 +1,35 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DeleteResult } from 'typeorm';
 import { User } from '../typeorm/entities/User';
 import { UserType } from '../typeorm/entities/UserType';
-import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(UserType)
-    private userTypeRepository: Repository<UserType>, // private jwt: JwtService,
+    private userTypeRepository: Repository<UserType>,
   ) {}
 
-  async create(username: string, password: string): Promise<any> {
-    const usernameExist = await this.findOne(username);
+  async create(username: string, hashedPassword: string): Promise<User> {
+    const userExist = await this.findOne(username);
 
-    if (usernameExist) {
+    if (userExist) {
       throw new BadRequestException('User with this username exist.');
     }
 
-    const regularUserType = await this.userTypeRepository.findOneBy({
+    const defaultUserType = await this.userTypeRepository.findOneBy({
       isDefaulUserType: true,
     });
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    const newUser = await this.userRepository.create({
+
+    const newUser = this.userRepository.create({
       username,
-      password: hash,
+      password: hashedPassword,
       createdAt: new Date(),
-      userType: regularUserType,
+      userType: defaultUserType,
     });
-    const result = await this.userRepository.save(newUser);
-    return result;
+    return await this.userRepository.save(newUser);
   }
 
   async findOne(username: string): Promise<User | undefined> {
@@ -40,5 +37,11 @@ export class UserService {
       where: { username },
       relations: { userType: true },
     });
+  }
+
+  async remove(id: number): Promise<boolean> {
+    const reservation: DeleteResult = await this.userRepository.delete(id);
+
+    return reservation.affected > 0;
   }
 }

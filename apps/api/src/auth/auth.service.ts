@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { User } from '../typeorm/entities/User';
+import { TokenModel } from './../user/models/token.model';
 import { FullUserModel } from './../user/models/fullUser.model';
 import { UserService } from './../user/user.service';
-import { JwtService } from '@nestjs/jwt';
-import { Injectable } from '@nestjs/common';
-import { User } from '../typeorm/entities/User';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -25,13 +26,18 @@ export class AuthService {
     return null;
   }
 
-  async login(user: FullUserModel): Promise<string> {
+  async login(user: FullUserModel): Promise<TokenModel> {
     const payload = { username: user.username, sub: user.id };
 
-    return this.jwtService.sign(payload);
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
-  async register(username, password): Promise<FullUserModel> {
-    return await this.userService.create(username, password);
+  async register(username: string, password: string): Promise<FullUserModel> {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+
+    return await this.userService.create(username, hash);
   }
 }

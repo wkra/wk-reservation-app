@@ -1,12 +1,12 @@
-import { AbilityFactory } from './../ability/ability.factory';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ForbiddenError } from '@casl/ability';
+import { ReservationService } from './reservation.service';
+import { ReservationModel } from './models/reservation.model';
 import { FullUserModel } from './../user/models/fullUser.model';
+import { AbilityFactory } from './../ability/ability.factory';
 import { Action } from './../ability/ability.factory';
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Reservation } from '../typeorm/entities/Reservation';
-import { ReservationModel } from './models/reservation.model';
-import { ReservationService } from './reservation.service';
 import {
   ForbiddenException,
   UseGuards,
@@ -22,24 +22,38 @@ export class ReservationResolver {
 
   @Query(() => [ReservationModel])
   async reservations(@Args('date') date: Date): Promise<Reservation[]> {
-    return await this.reservationService.getReservations(date);
+    return await this.reservationService.findAll(date);
   }
 
   @UseGuards(JwtAuthGuard)
   @Mutation(() => ReservationModel)
   async createReservation(
-    @Args('userId') userId: number,
+    @Args('userId') userId: number, // TODO user id from CONTEXT
     @Args('deskId') deskId: number,
     @Args('date') date: Date,
     @Context() context: any,
   ): Promise<ReservationModel> {
-    const user = context?.req?.user as FullUserModel;
+    const findByDeskIdAndDate =
+      await this.reservationService.findByDeskIdAndDate(deskId, date);
 
-    return await this.reservationService.createReservation(
-      userId,
-      deskId,
-      date,
-    );
+    if (findByDeskIdAndDate.length) {
+      throw new BadRequestException(
+        'Choosen desk is already reserved on that date!',
+      );
+    }
+
+    const findByUserIdAndDate =
+      await this.reservationService.findByUserIdAndDate(userId, date);
+
+    if (findByUserIdAndDate.length) {
+      throw new BadRequestException(
+        'You have a reservation on that day. Only one desk can be reserved on a single day!',
+      );
+    }
+    // TODO user id from context
+    // const user = context?.req?.user as FullUserModel;
+
+    return await this.reservationService.create(userId, deskId, date);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -48,22 +62,19 @@ export class ReservationResolver {
     @Args('id') id: number,
     @Context() context: any,
   ): Promise<boolean> {
-    const user = context?.req?.user as FullUserModel;
-    const reservation = await this.reservationService.findOne(id);
+    const fullUser = context?.req?.user as FullUserModel;
+    const reservation = await this.reservationService.findOneById(id);
 
     if (!reservation) {
       throw new BadRequestException('Reservation do not exist.');
     }
 
-    const ability = this.abilityFactory.defineAbility(user);
+    const ability = this.abilityFactory.defineAbility(fullUser);
 
     try {
-      ForbiddenError.from(ability).throwUnlessCan(
-        Action.Delete,
-        reservation.user,
-      );
+      ForbiddenError.from(ability).throwUnlessCan(Action.Remove, reservation);
 
-      return await this.reservationService.removeReservation(id);
+      return await this.reservationService.remove(id);
     } catch (error) {
       if (error instanceof ForbiddenError) {
         throw new ForbiddenException(error.message);

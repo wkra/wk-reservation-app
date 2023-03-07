@@ -14,24 +14,14 @@ export class ReservationService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async createReservation(
+  async create(
     userId: number,
     deskId: number,
     date: Date,
   ): Promise<Reservation> {
     const user = await this.userRepository.findOneBy({ id: userId });
     const desk = await this.deskRepository.findOneBy({ id: deskId });
-    const reservedDeskOnDate = await this.reservationRepository.find({
-      where: {
-        date,
-        desk: {
-          id: deskId,
-        },
-      },
-    });
-    if (reservedDeskOnDate.length) {
-      throw Error('Selected desk on that date is already reserved!');
-    }
+
     const reservation = await this.reservationRepository.create({
       date,
       createdAt: new Date(),
@@ -41,10 +31,18 @@ export class ReservationService {
     return await this.reservationRepository.save(reservation);
   }
 
-  async getReservations(date: Date): Promise<Reservation[]> {
+  async remove(id: number): Promise<boolean> {
+    const reservation: DeleteResult = await this.reservationRepository.delete(
+      id,
+    );
+    return reservation.affected > 0;
+  }
+
+  async findAll(date: Date): Promise<Reservation[]> {
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
+
     return await this.reservationRepository.find({
       relations: ['desk', 'user'],
       where: {
@@ -56,17 +54,38 @@ export class ReservationService {
     });
   }
 
-  async removeReservation(id: number): Promise<boolean> {
-    const reservation: DeleteResult = await this.reservationRepository.delete(
-      id,
-    );
-    return reservation.affected > 0;
-  }
-
-  async findOne(id: number): Promise<Reservation | undefined> {
+  async findOneById(id: number): Promise<Reservation | undefined> {
     return await this.reservationRepository.findOne({
       where: { id },
       relations: { user: true },
+    });
+  }
+
+  async findByDeskIdAndDate(
+    deskId: number,
+    date: Date,
+  ): Promise<Reservation[]> {
+    return await this.reservationRepository.find({
+      where: {
+        date,
+        desk: {
+          id: deskId,
+        },
+      },
+    });
+  }
+
+  async findByUserIdAndDate(
+    userId: number,
+    date: Date,
+  ): Promise<Reservation[]> {
+    return await this.reservationRepository.find({
+      where: {
+        date,
+        user: {
+          id: userId,
+        },
+      },
     });
   }
 }
