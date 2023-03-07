@@ -1,69 +1,14 @@
-import { gql } from '@apollo/client';
-import { client } from '../ApolloClient/client';
-import { AnyAction, Dispatch } from '@reduxjs/toolkit';
-import { reservationsActions } from './reservations';
-
-const GET_RESERVATIONS = gql`
-  query getReservations($date: DateTime!) {
-    reservations(date: $date) {
-      id
-      date
-      desk {
-        id
-        name
-        description
-        order
-      }
-      user {
-        username
-      }
-    }
-  }
-`;
-
-const CREATE_RESERVATION = gql`
-  mutation CreateReservation(
-    $userId: Float!
-    $deskId: Float!
-    $date: DateTime!
-  ) {
-    createReservation(userId: $userId, deskId: $deskId, date: $date) {
-      id
-      date
-      desk {
-        id
-        name
-        description
-        order
-      }
-      user {
-        username
-      }
-    }
-  }
-`;
-
-const REMOVE_RESERVATION = gql`
-  mutation RemoveReservation($id: Float!) {
-    removeReservation(id: $id)
-  }
-`;
+import { gql } from "@apollo/client";
+import { client } from "../ApolloClient/client";
+import { AnyAction, Dispatch } from "@reduxjs/toolkit";
+import { reservationsActions } from "./reservations";
+import reservationService from "../service/reservation/reservation.service";
+import { setMidnight } from "./../helpers/date.helper";
 
 export const fetchReservations = (date: string) => {
   return async (dispatch: Dispatch<AnyAction>) => {
-    const fetchDesksQuery = async () => {
-      const response = await client.query({
-        query: GET_RESERVATIONS,
-        variables: {
-          date,
-        },
-      });
-
-      return response.data.reservations;
-    };
-
     try {
-      const reservations = await fetchDesksQuery();
+      const reservations = await reservationService.get(date);
 
       dispatch(reservationsActions.replaceItems(reservations));
     } catch (e: any) {
@@ -72,30 +17,15 @@ export const fetchReservations = (date: string) => {
   };
 };
 
-export const addReservation = (
-  userId: number,
-  deskId: number,
-  date: string
-) => {
-  const preparedDate = new Date(date);
-  preparedDate.setHours(0);
+export const addReservation = (deskId: number, date: string) => {
+  const preparedDate = setMidnight(date);
 
   return async (dispatch: Dispatch<AnyAction>) => {
-    const addReservationMutation = async () => {
-      const response = await client.mutate({
-        mutation: CREATE_RESERVATION,
-        variables: {
-          userId,
-          deskId,
-          date: preparedDate,
-        },
-      });
-
-      return response.data.createReservation;
-    };
-
     try {
-      const newReservation = await addReservationMutation();
+      const newReservation = await reservationService.create(
+        deskId,
+        preparedDate
+      );
       dispatch(reservationsActions.addItem(newReservation));
     } catch (e: any) {
       console.log(e.message);
@@ -105,19 +35,8 @@ export const addReservation = (
 
 export const removeReservation = (id: number) => {
   return async (dispatch: Dispatch<AnyAction>) => {
-    const removeReservationMutation = async () => {
-      const response = await client.mutate({
-        mutation: REMOVE_RESERVATION,
-        variables: {
-          id,
-        },
-      });
-
-      return response.data.removeReservation;
-    };
-
     try {
-      const isRemoved = await removeReservationMutation();
+      const isRemoved = await reservationService.remove(id);
 
       if (isRemoved) {
         dispatch(reservationsActions.removeItem(id));

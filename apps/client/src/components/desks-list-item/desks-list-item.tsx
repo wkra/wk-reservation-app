@@ -1,17 +1,17 @@
 /* eslint-disable-next-line */
-import { useState } from 'react';
-import { Fragment } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
-import ConfirmModal from '../UI/confirm-modal/confirm-modal';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store';
+import { useState } from "react";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import ConfirmModal from "../UI/confirm-modal/confirm-modal";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
 import {
   addReservation,
   removeReservation,
-} from '../../store/reservations-actions';
-import { Reservation } from '../../interfaces';
-import { removeDesk } from '../../store/desks-actions';
+} from "../../store/reservations-actions";
+import { Reservation } from "../../interfaces";
+import { removeDesk } from "../../store/desks-actions";
 
 export interface DeskListItemProps {
   id: number;
@@ -55,7 +55,7 @@ export function DesksListItem(props: DeskListItemProps) {
   };
 
   const reservationHandler = async () => {
-    await dispatch(addReservation(userId, props.id, date));
+    await dispatch(addReservation(props.id, date));
     hideReservationConfirmHandler();
   };
 
@@ -72,7 +72,7 @@ export function DesksListItem(props: DeskListItemProps) {
   };
 
   function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ');
+    return classes.filter(Boolean).join(" ");
   }
 
   return (
@@ -126,9 +126,9 @@ export function DesksListItem(props: DeskListItemProps) {
                         href="#"
                         className={classNames(
                           active
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-700',
-                          'block px-4 py-2 text-sm'
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-700",
+                          "block px-4 py-2 text-sm"
                         )}
                         onClick={showReservationConfirmHandler}
                       >
@@ -144,9 +144,9 @@ export function DesksListItem(props: DeskListItemProps) {
                         href="#"
                         className={classNames(
                           active
-                            ? 'bg-gray-100 text-gray-900'
-                            : 'text-gray-700',
-                          'block px-4 py-2 text-sm'
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-700",
+                          "block px-4 py-2 text-sm"
                         )}
                         onClick={showReservationCancelHandler}
                       >
@@ -160,8 +160,8 @@ export function DesksListItem(props: DeskListItemProps) {
                     <a
                       href="#"
                       className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'block px-4 py-2 text-sm'
+                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                        "block px-4 py-2 text-sm"
                       )}
                       onClick={showDeskRemoveHandler}
                     >

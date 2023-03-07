@@ -28,7 +28,6 @@ export class ReservationResolver {
   @UseGuards(JwtAuthGuard)
   @Mutation(() => ReservationModel)
   async createReservation(
-    @Args('userId') userId: number, // TODO user id from CONTEXT
     @Args('deskId') deskId: number,
     @Args('date') date: Date,
     @Context() context: any,
@@ -41,6 +40,7 @@ export class ReservationResolver {
         'Choosen desk is already reserved on that date!',
       );
     }
+    const userId = context?.req?.user?.id;
 
     const findByUserIdAndDate =
       await this.reservationService.findByUserIdAndDate(userId, date);
@@ -50,8 +50,6 @@ export class ReservationResolver {
         'You have a reservation on that day. Only one desk can be reserved on a single day!',
       );
     }
-    // TODO user id from context
-    // const user = context?.req?.user as FullUserModel;
 
     return await this.reservationService.create(userId, deskId, date);
   }

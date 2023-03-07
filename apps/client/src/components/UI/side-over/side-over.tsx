@@ -10,7 +10,7 @@ export interface MyComponentProps {
 }
 
 
-export default function Example(props: MyComponentProps) {
+export default function sideOver(props: MyComponentProps) {
 
   return (
     <Transition.Root show={props.isOpen} as={Fragment}>

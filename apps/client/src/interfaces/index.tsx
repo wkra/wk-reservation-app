@@ -6,13 +6,15 @@ export interface Desk {
 }
 
 export interface User {
-  username: string
+  username: string;
 }
 
 export interface Reservation {
   id: number;
   desk: Desk;
-  user: User
+  user: User;
 }
+
+export interface FullUserModel {}
 
 export type DateType = string;
