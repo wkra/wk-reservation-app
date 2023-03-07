@@ -1,5 +1,5 @@
 import { client } from "../../ApolloClient/client";
-import { CREATE, LOGIN } from "./user.query";
+import { CREATE, LOGIN, GET } from "./user.query";
 
 const methods = {
   async create(username: string, password: string) {
@@ -13,8 +13,8 @@ const methods = {
       });
 
       return response.data;
-    } catch (error) {
-      console.log(error);
+    } catch (e: any) {
+      console.log(e.message);
     }
   },
 
@@ -29,8 +29,20 @@ const methods = {
       });
 
       return response.data;
-    } catch (error) {
-      console.log(error);
+    } catch (e: any) {
+      console.log(e.message);
+    }
+  },
+
+  async get() {
+    try {
+      const response = await client.query({
+        query: GET,
+      });
+
+      return response.data.user;
+    } catch (e: any) {
+      console.log(e.message);
     }
   },
 };

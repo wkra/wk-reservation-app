@@ -1,5 +1,6 @@
+import { FullUserModel } from './models/fullUser.model';
 import { UseGuards } from '@nestjs/common';
-import { Args, Resolver, Mutation } from '@nestjs/graphql';
+import { Args, Resolver, Mutation, Context, Query } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { CheckAbilities } from './../ability/abilities.decorator';
 import { Action } from './../ability/ability.factory';
@@ -11,11 +12,17 @@ import { User } from './../typeorm/entities/User';
 export class UserResolver {
   constructor(private userService: UserService) {}
 
-  @CheckAbilities({ action: Action.Remove, subject: User })
-  @UseGuards(AbilitiesGuard)
+  // @CheckAbilities({ action: Action.Remove, subject: User })
+  // @UseGuards(AbilitiesGuard)
+  // @UseGuards(JwtAuthGuard)
+  // @Mutation(() => Boolean)
+  // async removeUser(@Args('username') id: number): Promise<boolean> {
+  //   return this.userService.remove(id);
+  // }
+
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Boolean)
-  async removeUser(@Args('username') id: number): Promise<boolean> {
-    return this.userService.remove(id);
+  @Query(() => FullUserModel)
+  async user(@Context() context: any): Promise<FullUserModel> {
+    return context?.req?.user as FullUserModel;
   }
 }

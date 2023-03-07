@@ -12,6 +12,7 @@ export const GET = gql`
         order
       }
       user {
+        id
         username
       }
     }
@@ -30,6 +31,7 @@ export const CREATE = gql`
         order
       }
       user {
+        id
         username
       }
     }

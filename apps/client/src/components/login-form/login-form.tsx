@@ -1,10 +1,15 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import userService from "../../service/user/user.service";
+import { AppDispatch } from "../../store";
+import { globalActions } from "../../store/global";
+import { fetchUser } from "../../store/user-actions";
 import Input from "../UI/input/input";
 
 export interface MyComponentProps {}
 
 export default function LoginForm(props: MyComponentProps) {
+  const dispatch: AppDispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,6 +30,8 @@ export default function LoginForm(props: MyComponentProps) {
 
     if (response) {
       window.localStorage.setItem("token", response.login.access_token);
+      dispatch(fetchUser());
+      dispatch(globalActions.setShowLoginSideOver(false));
     }
   };
 

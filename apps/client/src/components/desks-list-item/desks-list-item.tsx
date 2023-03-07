@@ -18,56 +18,36 @@ export interface DeskListItemProps {
   name: string;
   description: string;
   reservation?: undefined | Reservation;
+  isUserAbleToReserve?: boolean;
 }
 
 export function DesksListItem(props: DeskListItemProps) {
   const dispatch: AppDispatch = useDispatch();
   const date = useSelector((state: RootState) => state.date.selected);
-  const userId: number = useSelector((state: RootState) => state.user.id);
+  const userId = useSelector((state: RootState) => state.user.id);
+  const isAdmin = useSelector(
+    (state: RootState) => state.user.userType.isAdmin
+  );
   const [isActiveReservationConfirm, setIsActiveReservationConfirm] =
     useState(false);
   const [isActiveReservationCancel, setIsActiveReservationCancel] =
     useState(false);
   const [isActiveDeskRemove, setIsActiveDeskRemove] = useState(false);
 
-  const showReservationConfirmHandler = () => {
-    setIsActiveReservationConfirm(true);
-  };
-
-  const hideReservationConfirmHandler = () => {
-    setIsActiveReservationConfirm(false);
-  };
-
-  const showReservationCancelHandler = () => {
-    setIsActiveReservationCancel(true);
-  };
-
-  const hideReservationCancelHandler = () => {
-    setIsActiveReservationCancel(false);
-  };
-
-  const showDeskRemoveHandler = () => {
-    setIsActiveDeskRemove(true);
-  };
-
-  const hideDeskRemoveHandler = () => {
-    setIsActiveDeskRemove(false);
-  };
-
   const reservationHandler = async () => {
     await dispatch(addReservation(props.id, date));
-    hideReservationConfirmHandler();
+    setIsActiveReservationConfirm(false);
   };
 
   const removeDeskHandler = async () => {
     await dispatch(removeDesk(props.id));
-    hideDeskRemoveHandler();
+    setIsActiveDeskRemove(false);
   };
 
   const removeReservationHandler = async () => {
     if (props.reservation) {
       await dispatch(removeReservation(props.reservation.id));
-      hideReservationCancelHandler();
+      setIsActiveReservationCancel(false);
     }
   };
 
@@ -90,7 +70,9 @@ export function DesksListItem(props: DeskListItemProps) {
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
         {props.reservation && (
           <span className="inline-flex rounded-full bg-red-100 px-2 text-xs font-semibold leading-5 text-red-800">
-            Reserved
+            {userId === props.reservation.user.id
+              ? "Your Reservation"
+              : "Reserved"}
           </span>
         )}
         {!props.reservation && (
@@ -119,55 +101,70 @@ export function DesksListItem(props: DeskListItemProps) {
           >
             <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div className="py-1">
-                {!props.reservation && (
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
+                <Menu.Item>
+                  {({ active }) =>
+                    props.reservation || !props.isUserAbleToReserve ? (
+                      <span className="text-gray-300 block px-4 py-2 text-sm">
+                        Reserve desk
+                      </span>
+                    ) : (
+                      <span
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
                             : "text-gray-700",
                           "block px-4 py-2 text-sm"
                         )}
-                        onClick={showReservationConfirmHandler}
+                        onClick={() => setIsActiveReservationConfirm(true)}
                       >
                         Reserve desk
-                      </a>
-                    )}
-                  </Menu.Item>
-                )}
-                {props.reservation && (
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
+                      </span>
+                    )
+                  }
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) =>
+                    (props.reservation &&
+                      props.reservation?.user?.id === userId) ||
+                    isAdmin ? (
+                      <span
                         className={classNames(
                           active
                             ? "bg-gray-100 text-gray-900"
                             : "text-gray-700",
                           "block px-4 py-2 text-sm"
                         )}
-                        onClick={showReservationCancelHandler}
+                        onClick={() => setIsActiveReservationCancel(true)}
                       >
-                        Remove reservation
-                      </a>
-                    )}
-                  </Menu.Item>
-                )}
+                        Cancel reservation
+                      </span>
+                    ) : (
+                      <span className="text-gray-300 block px-4 py-2 text-sm">
+                        Cancel reservation
+                      </span>
+                    )
+                  }
+                </Menu.Item>
                 <Menu.Item>
-                  {({ active }) => (
-                    <a
-                      href="#"
-                      className={classNames(
-                        active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                        "block px-4 py-2 text-sm"
-                      )}
-                      onClick={showDeskRemoveHandler}
-                    >
-                      Remove desk
-                    </a>
-                  )}
+                  {({ active }) =>
+                    isAdmin ? (
+                      <span
+                        className={classNames(
+                          active
+                            ? "bg-gray-100 text-gray-900"
+                            : "text-gray-700",
+                          "block px-4 py-2 text-sm"
+                        )}
+                        onClick={() => setIsActiveDeskRemove(true)}
+                      >
+                        Delete desk
+                      </span>
+                    ) : (
+                      <span className="text-gray-300 block px-4 py-2 text-sm">
+                        Delete desk
+                      </span>
+                    )
+                  }
                 </Menu.Item>
               </div>
             </Menu.Items>
@@ -176,7 +173,7 @@ export function DesksListItem(props: DeskListItemProps) {
         {isActiveReservationConfirm && (
           <ConfirmModal
             title="Confirm reservation"
-            onCancel={hideReservationConfirmHandler}
+            onCancel={() => setIsActiveReservationConfirm(false)}
             onConfirm={reservationHandler}
           >
             <>
@@ -189,7 +186,7 @@ export function DesksListItem(props: DeskListItemProps) {
         {isActiveReservationCancel && (
           <ConfirmModal
             title="Confirm cancellation"
-            onCancel={hideReservationCancelHandler}
+            onCancel={() => setIsActiveReservationCancel(false)}
             onConfirm={removeReservationHandler}
           >
             <>
@@ -201,7 +198,7 @@ export function DesksListItem(props: DeskListItemProps) {
         {isActiveDeskRemove && (
           <ConfirmModal
             title="Confirm desk remove"
-            onCancel={hideDeskRemoveHandler}
+            onCancel={() => setIsActiveDeskRemove(false)}
             onConfirm={removeDeskHandler}
           >
             <p className="text-sm text-gray-500">Desk: {props.name}</p>

@@ -9,7 +9,7 @@ export const fetchDesks = () => {
 
       dispatch(desksActions.replaceItems(desks));
     } catch (e) {
-      console.log("ERROR");
+      console.log(e);
     }
   };
 };
@@ -20,7 +20,7 @@ export const addDesk = (name: string, description: string, order: number) => {
       const newDesk = await deskService.create(name, description, order);
       dispatch(desksActions.addItem(newDesk));
     } catch (e) {
-      console.log("ERROR");
+      console.log(e);
     }
   };
 };
@@ -33,8 +33,8 @@ export const removeDesk = (id: number) => {
       if (isRemoved) {
         dispatch(desksActions.removeItem(id));
       }
-    } catch (e: any) {
-      console.log(e.message);
+    } catch (e) {
+      console.log(e);
     }
   };
 };

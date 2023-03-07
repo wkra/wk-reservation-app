@@ -7,6 +7,13 @@ export interface Desk {
 
 export interface User {
   username: string;
+  id: number;
+}
+
+export interface UserType {
+  id: number;
+  label: string;
+  isAdmin: boolean;
 }
 
 export interface Reservation {
@@ -15,6 +22,8 @@ export interface Reservation {
   user: User;
 }
 
-export interface FullUserModel {}
+export interface FullUserModel extends User {
+  userType: UserType;
+}
 
 export type DateType = string;

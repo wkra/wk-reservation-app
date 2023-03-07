@@ -26,9 +26,9 @@ export class DeskResolver {
     @Args('description') description: string,
     @Args('order', { nullable: true }) order: number,
   ): Promise<DeskModel> {
-    const deskWithSameName = await this.deskService.findOneByName(name);
+    const deskWithName = await this.deskService.findOneByName(name);
 
-    if (!deskWithSameName) {
+    if (deskWithName) {
       throw new BadRequestException('Desk with same name exist.');
     }
     return await this.deskService.create(name, description, order);

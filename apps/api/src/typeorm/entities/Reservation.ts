@@ -13,9 +13,15 @@ export class Reservation {
   @Column()
   date: Date;
 
-  @ManyToOne(() => Desk, (desk) => desk.reservations)
+  @ManyToOne(() => Desk, (desk) => desk.reservations, {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
   desk: Desk;
 
-  @ManyToOne(() => User, (user) => user.reservations)
+  @ManyToOne(() => User, (user) => user.reservations, {
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
+  })
   user: User;
 }

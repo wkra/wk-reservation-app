@@ -1,16 +1,16 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {Desk} from '../interfaces';
+import { createSlice } from "@reduxjs/toolkit";
+import { Desk } from "../interfaces";
 
 interface DateState {
-  items: Desk[]
+  items: Desk[];
 }
 
 const initialState: DateState = {
-  items: []
-}
+  items: [],
+};
 
 const slice = createSlice({
-  name: 'desks',
+  name: "desks",
   initialState,
   reducers: {
     replaceItems(state, action) {
@@ -18,13 +18,13 @@ const slice = createSlice({
     },
     addItem(state, action) {
       if (action.payload) {
-        state.items.push(action.payload)
+        state.items.push(action.payload);
       }
     },
     removeItem(state, action) {
-      state.items = state.items.filter((item) => item.id !== action.payload)
-    }
-  }
+      state.items = state.items.filter((item) => item.id !== action.payload);
+    },
+  },
 });
 
 export const desksActions = slice.actions;

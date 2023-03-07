@@ -1,5 +1,3 @@
-import { gql } from "@apollo/client";
-import { client } from "../ApolloClient/client";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { reservationsActions } from "./reservations";
 import reservationService from "../service/reservation/reservation.service";

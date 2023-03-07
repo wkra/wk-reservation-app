@@ -9,3 +9,8 @@ export class FullUserModel extends UserModel {
   @Field(() => UserTypeModel)
   userType: UserTypeModel;
 }
+
+export class FullUserWithPasswordModel extends FullUserModel {
+  @Field(() => String)
+  password: string;
+}

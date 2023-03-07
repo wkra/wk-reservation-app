@@ -1,24 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import SideOver from "../../UI/side-over/side-over";
-import { Bars3Icon, BookmarkSquareIcon } from "@heroicons/react/24/outline";
-import Input from "../../UI/input/input";
+import { BookmarkSquareIcon } from "@heroicons/react/24/outline";
 import LoginForm from "../../login-form/login-form";
+import { AppDispatch, RootState } from "../../../store";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../../../store/user-actions";
+import { globalActions } from "../../../store/global";
 
 const Header: React.FC = () => {
-  const [open, setOpen] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch: AppDispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.user.id);
+  const username = useSelector((state: RootState) => state.user.username);
+  const showLoginSideOver = useSelector(
+    (state: RootState) => state.global.showLoginSideOver
+  );
 
-  const showSideOver = () => {
-    setOpen(true);
+  const onShow = () => {
+    dispatch(globalActions.setShowLoginSideOver(true));
   };
 
   const onClose = () => {
-    setOpen(false);
+    dispatch(globalActions.setShowLoginSideOver(false));
   };
 
-  const usernameChangeHandler = (event: any) => {
-    setUsername(event.target.value);
+  const logoutHandler = () => {
+    dispatch(logoutUser());
   };
 
   return (
@@ -36,40 +42,36 @@ const Header: React.FC = () => {
                 <BookmarkSquareIcon className="h-6 w-6" />
               </a>
             </div>
-            <div className="-my-2 -mr-2 md:hidden">
-              <button
-                type="button"
-                className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                aria-expanded="false"
-                onClick={showSideOver}
-              >
-                <span className="sr-only">Open menu</span>
-                <Bars3Icon className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="hidden md:flex md:flex-1 md:items-center md:justify-between">
+            <div className="flex flex-1 items-center justify-between">
               <nav className="flex space-x-10">
-                <a
-                  href="#"
-                  className="text-base font-medium text-gray-500 hover:text-gray-900"
-                >
-                  Link
-                </a>
+                {userId > 0 && (
+                  <span className="text-base font-medium text-gray-500">
+                    Hello {username}
+                  </span>
+                )}
               </nav>
               <div className="flex items-center md:ml-12">
-                <a
-                  href="#"
-                  className="text-base font-medium text-gray-500 hover:text-gray-900"
-                  onClick={showSideOver}
-                >
-                  Log in
-                </a>
+                {userId ? (
+                  <span
+                    className="cursor-pointer text-base font-medium text-gray-500 hover:text-gray-900"
+                    onClick={logoutHandler}
+                  >
+                    Log out
+                  </span>
+                ) : (
+                  <span
+                    className="cursor-pointer text-base font-medium text-gray-500 hover:text-gray-900"
+                    onClick={onShow}
+                  >
+                    Log in
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <SideOver isOpen={open} onClose={onClose} title="Login">
+      <SideOver isOpen={showLoginSideOver} onClose={onClose} title="Login">
         <LoginForm />
       </SideOver>
     </>

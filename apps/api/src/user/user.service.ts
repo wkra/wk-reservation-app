@@ -1,3 +1,4 @@
+import { FullUserWithPasswordModel } from './models/fullUser.model';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeleteResult } from 'typeorm';
@@ -32,7 +33,9 @@ export class UserService {
     return await this.userRepository.save(newUser);
   }
 
-  async findOne(username: string): Promise<User | undefined> {
+  async findOne(
+    username: string,
+  ): Promise<FullUserWithPasswordModel | undefined> {
     return await this.userRepository.findOne({
       where: { username },
       relations: { userType: true },

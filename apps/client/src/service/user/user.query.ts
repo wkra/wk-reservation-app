@@ -16,3 +16,19 @@ export const LOGIN = gql`
     }
   }
 `;
+
+export const GET = gql`
+  query user {
+    user {
+      id
+      username
+      createdAt
+      userType {
+        id
+        label
+        isAdmin
+        isDefaulUserType
+      }
+    }
+  }
+`;

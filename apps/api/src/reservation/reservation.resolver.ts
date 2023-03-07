@@ -40,18 +40,21 @@ export class ReservationResolver {
         'Choosen desk is already reserved on that date!',
       );
     }
-    const userId = context?.req?.user?.id;
 
-    const findByUserIdAndDate =
-      await this.reservationService.findByUserIdAndDate(userId, date);
+    const user = context?.req?.user as FullUserModel;
 
-    if (findByUserIdAndDate.length) {
-      throw new BadRequestException(
-        'You have a reservation on that day. Only one desk can be reserved on a single day!',
-      );
+    if (!user.userType.isAdmin) {
+      const findByUserIdAndDate =
+        await this.reservationService.findByUserIdAndDate(user.id, date);
+
+      if (findByUserIdAndDate.length) {
+        throw new BadRequestException(
+          'You have a reservation on that day. Only one desk can be reserved on a single day!',
+        );
+      }
     }
 
-    return await this.reservationService.create(userId, deskId, date);
+    return await this.reservationService.create(user.id, deskId, date);
   }
 
   @UseGuards(JwtAuthGuard)

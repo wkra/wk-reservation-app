@@ -15,7 +15,7 @@ import { AbilityModule } from './../ability/ability.module';
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
       secret: process.env.API_JWT_SECRET,
-      signOptions: { expiresIn: '60000s' },
+      signOptions: { expiresIn: '1m' },
     }),
     UserModule,
     PassportModule,

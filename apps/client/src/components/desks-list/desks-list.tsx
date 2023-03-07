@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchDesks } from '../../store/desks-actions';
-import { AppDispatch, RootState } from '../../store';
-import DesksListItem from '../desks-list-item/desks-list-item';
-import { fetchReservations } from '../../store/reservations-actions';
-import { Reservation, Desk } from '../../interfaces';
-import DeskCreateForm from '../desk-create-form/desk-create-form';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDesks } from "../../store/desks-actions";
+import { AppDispatch, RootState } from "../../store";
+import DesksListItem from "../desks-list-item/desks-list-item";
+import { fetchReservations } from "../../store/reservations-actions";
+import { Reservation, Desk } from "../../interfaces";
+import DeskCreateForm from "../desk-create-form/desk-create-form";
 
 export default function DesksList() {
   const dispatch: AppDispatch = useDispatch();
@@ -17,6 +17,13 @@ export default function DesksList() {
   const reservations: Array<Reservation> = useSelector(
     (state: RootState) => state.reservations.items
   );
+  const userId = useSelector((state: RootState) => state.user.id);
+  const isAdmin = useSelector(
+    (state: RootState) => state.user.userType.isAdmin
+  );
+  const isUserAbleToReserve = isAdmin
+    ? true
+    : !reservations.find((item) => item.user.id === userId);
 
   useEffect(() => {
     dispatch(fetchReservations(selectedDate));
@@ -44,13 +51,23 @@ export default function DesksList() {
           </p>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <button
-            type="button"
-            onClick={addFormHandler}
-            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Add desk
-          </button>
+          {isAdmin ? (
+            <button
+              type="button"
+              onClick={addFormHandler}
+              className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Add desk
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled
+              className="inline-flex justify-center rounded-md border border-transparent bg-gray-400 py-2 px-4 text-sm font-medium text-white shadow-sm focus:outline-none"
+            >
+              Add desk
+            </button>
+          )}
         </div>
       </div>
       <div className="mt-8 flex flex-col">
@@ -94,6 +111,7 @@ export default function DesksList() {
                       description={description}
                       key={id}
                       reservation={reservations.find((el) => el.desk.id === id)}
+                      isUserAbleToReserve={isUserAbleToReserve}
                     />
                   ))}
                 </tbody>
